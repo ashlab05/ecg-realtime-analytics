@@ -92,6 +92,10 @@ services:
       DATABASE_URL: postgresql+psycopg2://ecg:ecg_secret@postgres:5432/ecg_analytics
       POSTGRES_HOST: postgres
       ECG_DATASET_PATH: /app/data/raw/MIT-BIH Arrhythmia Database.csv
+      # Broker switch: MESSAGE_BROKER=redis on the host (or .env) flips the
+      # API onto Redis Streams — see docs/REDIS_STREAMS.md.
+      MESSAGE_BROKER: ${MESSAGE_BROKER:-kafka}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
     ports:
       - "8000:8000"
     volumes:
@@ -150,7 +154,49 @@ services:
       - "8080:8080"
     profiles: ["ui"]
 
+  # ============================================================
+  # EXPERIMENTAL: Redis Streams alternative to Kafka.
+  #
+  #   docker compose --profile redis up --build
+  #
+  # Runs redis + the API + the Redis inference worker instead of the
+  # Kafka/Spark leg (those services are still started unless excluded
+  # with `--scale kafka=0 --scale spark=0`). See docs/REDIS_STREAMS.md.
+  # ============================================================
+  redis:
+    image: redis:7-alpine
+    container_name: ecg-redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    volumes:
+      - redis-data:/data
+    profiles: ["redis"]
+
+  redis-worker:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.api
+    container_name: ecg-redis-worker
+    command: ["python", "-m", "streaming.redis_inference_worker"]
+    depends_on:
+      redis:
+        condition: service_healthy
+    environment:
+      MESSAGE_BROKER: redis
+      REDIS_URL: redis://redis:6379/0
+    volumes:
+      - ./models:/app/models:ro
+      - ./logs:/app/logs
+    restart: on-failure
+    profiles: ["redis"]
+
 volumes:
   kafka-data:
   postgres-data:
   spark-checkpoints:
+  redis-data:

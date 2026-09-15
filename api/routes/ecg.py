@@ -15,7 +15,7 @@ from api.schemas import (
     SimulationStartRequest,
     SimulationStatus,
 )
-from api.services.kafka_service import event_publisher, kafka_available
+from api.services import broker
 from api.services.simulation import (
     feature_cache,
     get_simulation_engine,
@@ -74,32 +74,36 @@ def ecg_sample(mode: str = "random") -> dict:
 
 @router.post("/ecg/send", response_model=ECGSendResponse)
 def send_ecg_event(payload: ECGEventPayload) -> ECGSendResponse:
-    """Publish one ECG event to Kafka (topic ecg-events).
+    """Publish one ECG event to the message broker (Kafka or Redis Streams).
 
-    Falls back to direct in-process inference when Kafka is
+    Falls back to direct in-process inference when the broker is
     unavailable, so local development works without the full stack.
-    The full streaming path (Kafka -> Spark -> predictions) is used
-    whenever Kafka is reachable.
+    The full streaming path (broker -> streaming worker -> predictions)
+    is used whenever the broker is reachable.
     """
     event = _payload_to_event(payload)
     event_id = event["event_id"]
 
-    if kafka_available():
+    if broker.broker_available():
         try:
-            validated_features = _cache_features(event)
-            event_publisher.publish(event)
+            _cache_features(event)
+            broker.publish_event(event)
             return ECGSendResponse(
                 event_id=event_id,
                 published_to_kafka=True,
                 topic=settings.kafka_topic_events,
-                message="Event published; prediction will arrive via /ws/predictions.",
+                message=(
+                    f"Event published to {broker.broker_name()}; "
+                    "prediction will arrive via /ws/predictions."
+                ),
             )
         except EventValidationError as exc:
             raise HTTPException(status_code=422, detail=str(exc)) from exc
         except Exception as exc:  # noqa: BLE001 - broker errors fall back below
-            logger.warning("Kafka publish failed (%s); using direct inference fallback", exc)
+            logger.warning("%s publish failed (%s); using direct inference fallback",
+                           broker.broker_name(), exc)
 
-    # --- Direct fallback (no Kafka) ---------------------------------------
+    # --- Direct fallback (no broker) ---------------------------------------
     try:
         prediction = send_direct_prediction(event)
         _persist_and_broadcast(prediction)
@@ -108,8 +112,8 @@ def send_ecg_event(payload: ECGEventPayload) -> ECGSendResponse:
             published_to_kafka=False,
             topic=settings.kafka_topic_events,
             message=(
-                "Kafka unavailable — prediction computed in-process (direct mode) "
-                "and broadcast to WebSocket clients."
+                f"{broker.broker_name().capitalize()} unavailable — prediction computed "
+                "in-process (direct mode) and broadcast to WebSocket clients."
             ),
             prediction=prediction,
         )
@@ -145,11 +149,14 @@ def _cache_features(event: dict):
 @router.post("/simulation/start", response_model=SimulationStatus)
 async def start_simulation(request: SimulationStartRequest) -> SimulationStatus:
     engine = get_simulation_engine()
-    if not kafka_available():
+    if not broker.broker_available():
         raise HTTPException(
             status_code=503,
-            detail="Kafka is not reachable — the streaming simulation requires the full stack. "
-            "Start Kafka (docker compose up kafka) or send single events (direct mode).",
+            detail=(
+                f"{broker.broker_name().capitalize()} is not reachable — the streaming "
+                "simulation requires the full stack. Start the broker "
+                "(docker compose up) or send single events (direct mode)."
+            ),
         )
     try:
         await engine.start(

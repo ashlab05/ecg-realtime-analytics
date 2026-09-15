@@ -14,7 +14,8 @@ from api.schemas import (
     SystemStatusOut,
     ThresholdOut,
 )
-from api.services.kafka_service import kafka_available, latency_tracker
+from api.services import broker
+from api.services.kafka_service import latency_tracker
 from ecg_core.config import settings
 
 logger = logging.getLogger(__name__)
@@ -62,11 +63,17 @@ def _models_status() -> ComponentStatus:
 
 @router.get("/system/status", response_model=SystemStatusOut)
 def system_status() -> SystemStatusOut:
+    # The 'kafka' slot reports the *active* broker (MESSAGE_BROKER env),
+    # so the dashboard stays unchanged when running on Redis Streams.
+    if settings.use_redis:
+        broker_detail = f"{settings.redis_url} (Redis Streams)"
+    else:
+        broker_detail = settings.kafka_bootstrap_servers
     return SystemStatusOut(
         api=ComponentStatus(status="up", detail=f"uptime {time.time() - _START_TIME:.0f}s"),
         kafka=ComponentStatus(
-            status="up" if kafka_available() else "down",
-            detail=f"{settings.kafka_bootstrap_servers}",
+            status="up" if broker.broker_available() else "down",
+            detail=broker_detail,
         ),
         spark=_spark_status(),
         database=_database_status(),

@@ -15,7 +15,8 @@ from typing import Dict, Optional
 
 import numpy as np
 
-from api.services.kafka_service import EventPublisher, kafka_available
+from api.services.kafka_service import EventPublisher
+from ecg_core.config import settings
 from streaming.feature_pipeline import validate_event
 from streaming.kafka_producer import DatasetSampler, row_to_event_payload
 
@@ -47,7 +48,8 @@ feature_cache = FeatureCache()
 class SimulationEngine:
     """Start/stop streaming simulations of ECG events."""
 
-    def __init__(self, publisher: EventPublisher):
+    def __init__(self, publisher):
+        """`publisher` is any broker publisher exposing publish()/flush()."""
         self._publisher = publisher
         self._sampler: Optional[DatasetSampler] = None
         self._task: Optional[asyncio.Task] = None
@@ -176,5 +178,10 @@ simulation_engine: Optional[SimulationEngine] = None
 def get_simulation_engine() -> SimulationEngine:
     global simulation_engine
     if simulation_engine is None:
-        simulation_engine = SimulationEngine(EventPublisher())
+        if settings.use_redis:
+            from api.services.redis_service import RedisEventPublisher
+
+            simulation_engine = SimulationEngine(RedisEventPublisher())
+        else:
+            simulation_engine = SimulationEngine(EventPublisher())
     return simulation_engine

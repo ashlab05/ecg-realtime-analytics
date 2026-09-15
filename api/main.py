@@ -27,7 +27,8 @@ from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 
 from api.routes import ecg, predictions, system
-from api.services.kafka_service import PredictionConsumer, latency_tracker
+from api.services import broker
+from api.services.kafka_service import latency_tracker
 from api.services.simulation import get_simulation_engine
 from api.services.websocket_manager import ws_manager
 from ecg_core.config import settings
@@ -38,7 +39,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger("api")
 
-prediction_consumer: PredictionConsumer | None = None
+prediction_consumer = None
 
 
 def _on_prediction(prediction: dict) -> None:
@@ -82,15 +83,20 @@ async def lifespan(app: FastAPI):
         logger.warning("Models not ready (%s); train before inferring.", exc)
 
     # --- Background prediction consumer -------------------------------------
-    prediction_consumer = PredictionConsumer(on_prediction=_on_prediction)
+    # Broker is selected via MESSAGE_BROKER (kafka | redis).
+    prediction_consumer = broker.make_prediction_consumer(on_prediction=_on_prediction)
     prediction_consumer.start()
 
-    logger.info("API ready on %s:%s", settings.api_host, settings.api_port)
+    logger.info(
+        "API ready on %s:%s (broker=%s)",
+        settings.api_host, settings.api_port, broker.broker_name(),
+    )
     try:
         yield
     finally:
         if prediction_consumer:
             prediction_consumer.stop()
+        broker.stop_publishers()
         get_simulation_engine().stop()
         logger.info("API shut down.")
 

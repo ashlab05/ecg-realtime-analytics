@@ -59,6 +59,19 @@ class Settings:
     kafka_topic_errors: str = os.getenv("KAFKA_TOPIC_ERRORS", "ecg-errors")
     kafka_consumer_group: str = os.getenv("KAFKA_CONSUMER_GROUP", "ecg-analytics")
 
+    # --- Redis Streams (experimental broker alternative) ----------------
+    # MESSAGE_BROKER=kafka | redis selects which broker the API publishes
+    # to and which prediction consumer it runs. Streams reuse the Kafka
+    # topic names (ecg-events / ecg-predictions / ecg-errors).
+    message_broker: str = os.getenv("MESSAGE_BROKER", "kafka")
+    redis_url: str = os.getenv("REDIS_URL", "redis://localhost:6379/0")
+    redis_stream_maxlen: int = int(os.getenv("REDIS_STREAM_MAXLEN", "100000"))
+    redis_block_ms: int = int(os.getenv("REDIS_BLOCK_MS", "1000"))
+
+    @property
+    def use_redis(self) -> bool:
+        return self.message_broker.strip().lower() == "redis"
+
     # --- PostgreSQL ----------------------------------------------------
     database_url: str = os.getenv(
         "DATABASE_URL",
