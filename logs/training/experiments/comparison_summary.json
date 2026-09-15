@@ -1,0 +1,72 @@
+[
+  {
+    "experiment": "xgboost_only",
+    "accuracy": 0.9918564618644068,
+    "balanced_accuracy": 0.7550557920511242,
+    "macro_f1": 0.7561762519211983,
+    "weighted_f1": 0.9917943168234393,
+    "sveb_recall": 0.9400479616306955,
+    "veb_recall": 0.9800190294957184,
+    "f_recall": 0.859504132231405,
+    "q_recall": 0.0,
+    "mean_latency_ms": 0.0030070152262985077,
+    "throughput_eps": 339322.6417904913,
+    "stage2_routing_rate": null
+  },
+  {
+    "experiment": "autoencoder_only",
+    "accuracy": 0.929886122881356,
+    "balanced_accuracy": 0.8585042278118196,
+    "macro_f1": 0.8290161005173675,
+    "weighted_f1": 0.9326771992694983,
+    "sveb_recall": null,
+    "veb_recall": null,
+    "f_recall": null,
+    "q_recall": null,
+    "mean_latency_ms": 0.0005144709776085605,
+    "throughput_eps": 2664098.9897669996,
+    "stage2_routing_rate": null
+  },
+  {
+    "experiment": "hybrid_ae_xgb",
+    "accuracy": 0.9277674788135594,
+    "balanced_accuracy": 0.5709541399676447,
+    "macro_f1": 0.5253376828419754,
+    "weighted_f1": 0.9289844282933193,
+    "sveb_recall": 0.23980815347721823,
+    "veb_recall": 0.9552806850618458,
+    "f_recall": 0.7107438016528925,
+    "q_recall": 0.0,
+    "mean_latency_ms": 0.0017907038973700282,
+    "throughput_eps": 568756.7789029374,
+    "stage2_routing_rate": 0.12658898305084745
+  },
+  {
+    "experiment": "xgboost_augmented",
+    "accuracy": 0.9913930084745762,
+    "balanced_accuracy": 0.7493976019761929,
+    "macro_f1": 0.7532489578877367,
+    "weighted_f1": 0.9913184409946945,
+    "sveb_recall": 0.9376498800959233,
+    "veb_recall": 0.9790675547098002,
+    "f_recall": 0.8347107438016529,
+    "q_recall": 0.0,
+    "mean_latency_ms": 0.0032627762623319875,
+    "throughput_eps": 309099.1217138293,
+    "stage2_routing_rate": null
+  },
+  {
+    "experiment": "mlp_baseline",
+    "accuracy": 0.9382944915254238,
+    "balanced_accuracy": 0.7577347738350427,
+    "macro_f1": 0.6041672583151871,
+    "weighted_f1": 0.9478849207011276,
+    "sveb_recall": 0.9640287769784173,
+    "veb_recall": 0.9543292102759277,
+    "f_recall": 0.9338842975206612,
+    "q_recall": 0.0,
+    "mean_latency_ms": 0.00028690154884593614,
+    "throughput_eps": 4091376.614188473,
+    "stage2_routing_rate": null
+  }
+]

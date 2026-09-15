@@ -1,0 +1,27 @@
+# Spark Structured Streaming service (runs the streaming job in local[*] mode).
+# Self-contained: Python 3.11 + Java 17 + ML dependencies.
+FROM python:3.11-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64 \
+    SPARK_MASTER=local[*]
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        openjdk-17-jre-headless \
+        procps \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+RUN pip install --index-url https://download.pytorch.org/whl/cpu torch==2.2.2
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+
+COPY ecg_core/ ecg_core/
+COPY inference/ inference/
+COPY streaming/ streaming/
+COPY models/ models/
+
+CMD ["python", "streaming/spark_streaming.py"]

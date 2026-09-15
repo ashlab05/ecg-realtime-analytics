@@ -1,0 +1,13 @@
+# Multi-stage build: compile the React dashboard, serve from nginx,
+# proxying /api, /ws and /health to the FastAPI service.
+FROM node:20-alpine AS build
+WORKDIR /app
+COPY dashboard/package.json dashboard/package-lock.json* ./
+RUN npm install
+COPY dashboard/ .
+RUN npm run build
+
+FROM nginx:1.27-alpine
+COPY --from=build /app/dist /usr/share/nginx/html
+COPY docker/nginx.conf /etc/nginx/conf.d/default.conf
+EXPOSE 80

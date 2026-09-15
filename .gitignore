@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Data & models (large artifacts)
+data/raw/*.csv
+models/**/*.pt
+models/**/*.json
+models/**/*.joblib
+!models/**/.gitkeep
+
+# Logs (but keep experiment results — they feed the dashboard's
+# Model Performance page and are small JSON)
+logs/**/*.csv
+logs/**/*.log
+logs/inference/*.jsonl
+!logs/training/experiments/*.json
+
+# Environment
+.env
+
+# Local databases
+*.db
+
+# Node / dashboard
+dashboard/node_modules/
+dashboard/dist/
+*.tsbuildinfo
+dashboard/vite.config.js
+dashboard/vite.config.d.ts
+
+# Spark
+spark-checkpoints/
+derby.log
+
+# Notebooks
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
