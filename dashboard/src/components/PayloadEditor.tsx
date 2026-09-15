@@ -22,7 +22,7 @@ export default function PayloadEditor() {
   const [text, setText] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<{ prediction: Prediction; viaKafka: boolean } | null>(null);
+  const [result, setResult] = useState<Prediction | null>(null);
 
   const loadSample = async (m: string) => {
     setError(null);
@@ -46,7 +46,7 @@ export default function PayloadEditor() {
     try {
       const event: EcgEvent = JSON.parse(text);
       const resp = await api.sendEcgEvent(event);
-      if (resp.prediction) setResult({ prediction: resp.prediction, viaKafka: resp.published_to_kafka });
+      if (resp.prediction) setResult(resp.prediction);
       else setError(resp.message);
     } catch (err) {
       setError(`Send failed: ${String(err)}`);
@@ -105,29 +105,29 @@ export default function PayloadEditor() {
         <div className="mt-3 rounded-lg border border-surface-border bg-black/30 p-3">
           <div className="flex items-center justify-between mb-2">
             <span className="text-[10px] uppercase tracking-wider text-slate-500">
-              Detection result · {result.viaKafka ? 'via Kafka → Spark → inference' : 'direct fallback (Kafka down)'}
+              Detection result · two-stage inference pipeline
             </span>
             <span
               className={`badge ${
-                result.prediction.is_abnormal
+                result.is_abnormal
                   ? 'bg-signal-abnormal/15 text-signal-abnormal'
                   : 'bg-signal-normal/15 text-signal-normal'
               }`}
             >
-              {result.prediction.predicted_class}
+              {result.predicted_class}
             </span>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-            <Metric label="Confidence" value={result.prediction.confidence.toFixed(3)} />
-            <Metric label="Recon. error" value={result.prediction.reconstruction_error.toFixed(4)} />
-            <Metric label="Threshold" value={result.prediction.anomaly_threshold.toFixed(4)} />
+            <Metric label="Confidence" value={result.confidence.toFixed(3)} />
+            <Metric label="Recon. error" value={result.reconstruction_error.toFixed(4)} />
+            <Metric label="Threshold" value={result.anomaly_threshold.toFixed(4)} />
             <Metric
               label="Latency"
-              value={`${(result.prediction.latency_ms ?? result.prediction.inference_latency_ms ?? 0).toFixed(2)} ms`}
+              value={`${(result.latency_ms ?? result.inference_latency_ms ?? 0).toFixed(2)} ms`}
             />
           </div>
           <div className="mt-2 text-[10px] text-slate-600 font-mono">
-            stage={result.prediction.stage ?? '—'} · event={result.prediction.event_id}
+            stage={result.stage ?? '—'} · event={result.event_id}
           </div>
         </div>
       )}

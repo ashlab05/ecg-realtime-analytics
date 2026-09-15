@@ -29,6 +29,31 @@ It is split into **four sections** (sidebar on the left):
   (Experiment results on the Model Performance page also need
   `python3 training/evaluate_models.py` — run once, takes a few minutes.)
 
+## Option 0 — Demo mode (single command, nothing else running)
+
+For demos: one Python process, **no Kafka, no Spark, no PostgreSQL, no
+Node** — just the real trained models and a seeded in-memory store so
+every page has content the moment it opens.
+
+```bash
+cd ecg-realtime-analytics
+python3 demo/server.py        # → http://localhost:8000
+```
+
+Requires `dashboard/dist/` to exist (build once with
+`npm install --include=dev && npm run build`). The server:
+
+- serves the built dashboard at `/`,
+- runs every API the dashboard calls, with `/api/ecg/send` doing the full
+  validation → scaler → autoencoder gate → XGBoost path in-process,
+- reports **every component as up** (there is no broker to be "down"),
+- seeds 30 predictions at startup and streams live ones over the same
+  `/ws/predictions` socket,
+- runs the streaming simulation as an asyncio task.
+
+Prefer iterating on the UI? `npm run dev` also works — Vite proxies
+`/api` and `/ws` to this server instead of the full API.
+
 ## Option A — Local dev (recommended while iterating)
 
 Terminal 1 — start the FastAPI backend on port **8000**:

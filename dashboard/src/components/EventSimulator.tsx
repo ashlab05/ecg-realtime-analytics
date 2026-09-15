@@ -60,9 +60,9 @@ export default function EventSimulator({ onEventSent, simulationStatus, onSimula
       const resp = await api.sendEcgEvent(pendingEvent);
       onEventSent(pendingEvent);
       setMessage(
-        resp.published_to_kafka
-          ? `Event ${resp.event_id} published to Kafka — prediction incoming via WebSocket.`
-          : `Kafka unavailable — direct inference used (source: ${resp.prediction?.predicted_class}).`,
+        resp.prediction
+          ? `Event ${resp.event_id} processed — detected ${resp.prediction.predicted_class} in ${resp.prediction.latency_ms?.toFixed(2) ?? '—'} ms.`
+          : `Event ${resp.event_id} accepted — prediction incoming via WebSocket.`,
       );
     } catch (err) {
       setMessage(`Send failed: ${String(err)}`);
