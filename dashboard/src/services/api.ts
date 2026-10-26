@@ -91,6 +91,11 @@ export async function getExperiments(): Promise<ExperimentsResponse> {
   return data;
 }
 
+export async function getMetaheuristicsSummary(): Promise<Record<string, unknown>> {
+  const { data } = await api.get('/api/models/metaheuristics');
+  return data;
+}
+
 export async function getModelsStatus(): Promise<Record<string, unknown>> {
   const { data } = await api.get('/api/models/status');
   return data;

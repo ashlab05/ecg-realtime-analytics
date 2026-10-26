@@ -134,6 +134,15 @@ export interface ExperimentMetrics {
   balanced_accuracy?: number | null;
   macro_f1?: number | null;
   weighted_f1?: number | null;
+  f1_score?: number | null;
+  auroc?: number | null;
+  auprc?: number | null;
+  precision?: number | null;
+  recall?: number | null;
+  specificity?: number | null;
+  mcc?: number | null;
+  false_positive_rate?: number | null;
+  fp_per_1000_normal?: number | null;
   per_class?: Record<string, PerClassMetrics>;
   confusion_matrix?: { labels: string[]; matrix: number[][] };
   latency_ms?: LatencyStats;

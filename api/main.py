@@ -153,6 +153,10 @@ if _DIST.is_dir():
     from fastapi.responses import FileResponse
 
     app.mount("/assets", StaticFiles(directory=_DIST / "assets"), name="assets")
+    
+    _FIGURES = Path(__file__).resolve().parent.parent / "docs" / "figures"
+    if _FIGURES.is_dir():
+        app.mount("/figures", StaticFiles(directory=_FIGURES), name="figures")
 
     @app.get("/", include_in_schema=False)
     async def index():

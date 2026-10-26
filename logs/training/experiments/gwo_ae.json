@@ -1,0 +1,104 @@
+{
+  "experiment": "gwo_ae",
+  "extra": {
+    "optimizer": "GWO",
+    "run_id": "run_20261024_075517",
+    "hyperparameters": {
+      "latent_dim": 32,
+      "hidden_dims": [
+        192,
+        96
+      ],
+      "lr": 0.00125758874855917,
+      "weight_decay": 2.198720554259201e-06,
+      "dropout": 0.03372380255866521,
+      "noise_std": 0.1157161281004427,
+      "batch_size": 512
+    },
+    "threshold": 0.016307596109507466,
+    "threshold_percentile": 95.0,
+    "validation_metrics": {
+      "auroc": 0.9483298504878069,
+      "auprc": 0.7725771244434492,
+      "accuracy": 0.9331965042372882,
+      "precision": 0.6504653567735263,
+      "recall": 0.7906976744186046,
+      "sensitivity": 0.7906976744186046,
+      "specificity": 0.9499740990157626,
+      "f1_score": 0.7137588652482268,
+      "balanced_accuracy": 0.8703358867171835,
+      "mcc": 0.680480446150669,
+      "confusion_matrix": {
+        "tn": 12837,
+        "fp": 676,
+        "fn": 333,
+        "tp": 1258,
+        "labels": [
+          "Normal (0)",
+          "Abnormal (1)"
+        ],
+        "matrix": [
+          [
+            12837,
+            676
+          ],
+          [
+            333,
+            1258
+          ]
+        ]
+      },
+      "false_positive_rate": 0.0500259009842374,
+      "fp_per_1000_normal": 50.025900984237396,
+      "normal_samples": 13513,
+      "abnormal_samples": 1591,
+      "total_samples": 15104,
+      "class_prevalence": 0.1053363347457627,
+      "threshold_used": 0.016307596109507466,
+      "positive_class": "abnormal (1)",
+      "zero_division_policy": 0.0
+    },
+    "optimization_time_s": 139.63278554205317,
+    "total_train_time_s": 14.250492291990668
+  },
+  "metrics": {
+    "accuracy": 0.9282971398305084,
+    "balanced_accuracy": 0.8651023855185567,
+    "macro_f1": 0.6975705110304385,
+    "weighted_f1": 0.6975705110304385,
+    "auroc": 0.94660159876773,
+    "auprc": 0.7612358071067643,
+    "roc_auc_ovr_macro": 0.94660159876773,
+    "precision": 0.6276381909547739,
+    "recall": 0.7850408548082967,
+    "specificity": 0.9451639162288167,
+    "mcc": 0.6627679772216591,
+    "confusion_matrix": {
+      "tn": 12772,
+      "fp": 741,
+      "fn": 342,
+      "tp": 1249,
+      "labels": [
+        "Normal (0)",
+        "Abnormal (1)"
+      ],
+      "matrix": [
+        [
+          12772,
+          741
+        ],
+        [
+          342,
+          1249
+        ]
+      ]
+    },
+    "latency_ms": {
+      "mean": 0.0005508121553171126,
+      "p50": 0.0005561579023455802,
+      "p95": 0.0005633154398958017,
+      "p99": 0.0005634950795896565
+    },
+    "throughput_events_per_second": 1895433.6549183605
+  }
+}

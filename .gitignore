@@ -10,6 +10,7 @@ venv/
 
 # Data & models (large artifacts)
 data/raw/*.csv
+artifacts/
 models/**/*.pt
 models/**/*.json
 models/**/*.joblib

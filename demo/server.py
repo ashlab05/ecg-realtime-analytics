@@ -177,7 +177,17 @@ def _handle_prediction(prediction: dict, features=None) -> None:
 class DemoSockets:
     def __init__(self):
         self.clients: set[WebSocket] = set()
-        self._queue: asyncio.Queue = asyncio.Queue()
+        # asyncio primitives bind to an event loop when they first wait.
+        # Construct the queue during application startup rather than at module
+        # import time, otherwise uvicorn can create it on a different loop.
+        self._queue: Optional[asyncio.Queue[str]] = None
+        self._loop: Optional[asyncio.AbstractEventLoop] = None
+
+    async def start(self) -> None:
+        """Initialize the broadcaster on FastAPI's running event loop."""
+        self._loop = asyncio.get_running_loop()
+        self._queue = asyncio.Queue()
+        asyncio.create_task(self.pump())
 
     async def connect(self, ws: WebSocket):
         await ws.accept()
@@ -187,11 +197,17 @@ class DemoSockets:
         self.clients.discard(ws)
 
     def broadcast(self, payload: dict) -> None:
-        """Fire-and-forget broadcast from sync/async context alike."""
-        self._queue.put_nowait(json.dumps(payload))
+        """Queue a broadcast safely from async routes or sync worker threads."""
+        if self._loop is None or self._queue is None:
+            logger.warning("Dropping WebSocket broadcast before startup")
+            return
+        message = json.dumps(payload)
+        self._loop.call_soon_threadsafe(self._queue.put_nowait, message)
 
     async def pump(self):
         """Drain the broadcast queue to all connected clients."""
+        if self._queue is None:
+            raise RuntimeError("WebSocket broadcaster was not started")
         while True:
             message = await self._queue.get()
             dead = []
@@ -264,7 +280,7 @@ _DIST = Path(__file__).resolve().parent.parent / "dashboard" / "dist"
 
 @app.on_event("startup")
 async def startup() -> None:
-    asyncio.create_task(ws_manager.pump())
+    await ws_manager.start()
     try:
         get_model_bundle()
         logger.info("Model bundle loaded (AE threshold + Stage-2 XGBoost ready).")
@@ -433,10 +449,14 @@ def threshold() -> dict:
 
 @app.get("/api/models/experiments")
 def model_experiments() -> dict:
-    """Offline experiment results (A-E) from logs/training/experiments/."""
+    """Offline experiment results from logs/training/experiments/."""
     labels = {
+        "baseline_ae": "Baseline AE (Adam Default)",
+        "pso_ae": "PSO-Tuned AE",
+        "gwo_ae": "GWO-Tuned AE",
+        "coa_ae": "COA-Tuned AE",
         "xgboost_only": "A · XGBoost only (5-class)",
-        "autoencoder_only": "B · Autoencoder anomaly detection",
+        "autoencoder_only": "B · Autoencoder anomaly detection (Legacy)",
         "hybrid_ae_xgb": "C · Hybrid AE → XGBoost (production)",
         "xgboost_augmented": "D · XGBoost + AE latent/error features",
         "mlp_baseline": "E · MLP baseline",
@@ -461,6 +481,18 @@ def model_experiments() -> dict:
     order = {name: i for i, name in enumerate(labels)}
     experiments.sort(key=lambda e: (order.get(e["name"], 99), e["name"]))
     return {"experiments": experiments, "directory": str(exp_dir)}
+
+
+@app.get("/api/models/metaheuristics")
+def metaheuristics_summary() -> dict:
+    """Summary and complete metrics for Baseline, PSO, GWO, and COA Autoencoders."""
+    summary_path = Path(__file__).resolve().parent.parent / "reports" / "tables" / "all_experiments_summary.json"
+    if summary_path.exists():
+        try:
+            return json.loads(summary_path.read_text())
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
+    return {}
 
 
 @app.get("/api/explain/{event_id}")
@@ -515,6 +547,14 @@ async def websocket_predictions(websocket: WebSocket) -> None:
 # Serve the built dashboard (single-command demo: server + UI in one).
 if _DIST.is_dir():
     app.mount("/assets", StaticFiles(directory=_DIST / "assets"), name="assets")
+    
+    _FIGURES = Path(__file__).resolve().parent.parent / "docs" / "figures"
+    if _FIGURES.is_dir():
+        app.mount("/figures", StaticFiles(directory=_FIGURES), name="figures")
+
+    _REPORT_FIGURES = Path(__file__).resolve().parent.parent / "reports" / "figures"
+    if _REPORT_FIGURES.is_dir():
+        app.mount("/report_figures", StaticFiles(directory=_REPORT_FIGURES), name="report_figures")
 
     @app.get("/", include_in_schema=False)
     async def index():

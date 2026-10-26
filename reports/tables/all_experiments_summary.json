@@ -1,0 +1,486 @@
+{
+  "baseline_ae": {
+    "experiment_name": "baseline_ae",
+    "optimizer": "NONE",
+    "run_id": "run_20261024_074848",
+    "hyperparameters": {
+      "latent_dim": 16,
+      "hidden_dims": [
+        128,
+        64
+      ],
+      "lr": 0.001,
+      "weight_decay": 0.0,
+      "dropout": 0.1,
+      "noise_std": 0.0,
+      "batch_size": 256
+    },
+    "threshold": 0.057829298751284244,
+    "threshold_percentile": 95.0,
+    "training_stats": {
+      "epochs_completed": 50,
+      "best_epoch": 47,
+      "best_train_loss": 0.06446937431514131,
+      "best_val_loss": 0.02275584265589714,
+      "total_train_time_s": 11.809150583983865,
+      "early_stopped": false
+    },
+    "optimization_stats": {
+      "elapsed_s": 0.0,
+      "evaluations": 0,
+      "best_fitness": 0.7505131203312801
+    },
+    "validation_metrics": {
+      "auroc": 0.9429659257284335,
+      "auprc": 0.7505131203312801,
+      "accuracy": 0.9312102754237288,
+      "precision": 0.6449579831932774,
+      "recall": 0.7718416090509114,
+      "sensitivity": 0.7718416090509114,
+      "specificity": 0.9499740990157626,
+      "f1_score": 0.7027181688125894,
+      "balanced_accuracy": 0.860907854033337,
+      "mcc": 0.6676008323392625,
+      "confusion_matrix": {
+        "tn": 12837,
+        "fp": 676,
+        "fn": 363,
+        "tp": 1228,
+        "labels": [
+          "Normal (0)",
+          "Abnormal (1)"
+        ],
+        "matrix": [
+          [
+            12837,
+            676
+          ],
+          [
+            363,
+            1228
+          ]
+        ]
+      },
+      "false_positive_rate": 0.0500259009842374,
+      "fp_per_1000_normal": 50.025900984237396,
+      "normal_samples": 13513,
+      "abnormal_samples": 1591,
+      "total_samples": 15104,
+      "class_prevalence": 0.1053363347457627,
+      "threshold_used": 0.057829298751284244,
+      "positive_class": "abnormal (1)",
+      "zero_division_policy": 0.0
+    },
+    "test_metrics": {
+      "auroc": 0.9404490859024734,
+      "auprc": 0.7345723746290242,
+      "accuracy": 0.929886122881356,
+      "precision": 0.639412997903564,
+      "recall": 0.7668133249528598,
+      "sensitivity": 0.7668133249528598,
+      "specificity": 0.9490860652704802,
+      "f1_score": 0.6973420977422121,
+      "balanced_accuracy": 0.8579496951116701,
+      "mcc": 0.6615347039239824,
+      "confusion_matrix": {
+        "tn": 12825,
+        "fp": 688,
+        "fn": 371,
+        "tp": 1220,
+        "labels": [
+          "Normal (0)",
+          "Abnormal (1)"
+        ],
+        "matrix": [
+          [
+            12825,
+            688
+          ],
+          [
+            371,
+            1220
+          ]
+        ]
+      },
+      "false_positive_rate": 0.05091393472951972,
+      "fp_per_1000_normal": 50.913934729519724,
+      "normal_samples": 13513,
+      "abnormal_samples": 1591,
+      "total_samples": 15104,
+      "class_prevalence": 0.1053363347457627,
+      "threshold_used": 0.057829298751284244,
+      "positive_class": "abnormal (1)",
+      "zero_division_policy": 0.0,
+      "latency_ms": {
+        "mean": 0.00035712448337462625,
+        "p50": 0.00035155144205881216,
+        "p95": 0.00038130679212819386,
+        "p99": 0.00038449975856904423
+      },
+      "throughput_events_per_second": 2969891.3161331075
+    }
+  },
+  "pso_ae": {
+    "experiment_name": "pso_ae",
+    "optimizer": "PSO",
+    "run_id": "run_20261024_075128",
+    "hyperparameters": {
+      "latent_dim": 24,
+      "hidden_dims": [
+        192,
+        96
+      ],
+      "lr": 0.004158324173320439,
+      "weight_decay": 2.527615561485478e-05,
+      "dropout": 0.10259243269881517,
+      "noise_std": 0.18057817698585132,
+      "batch_size": 512
+    },
+    "threshold": 0.05356835545244815,
+    "threshold_percentile": 95.0,
+    "training_stats": {
+      "epochs_completed": 27,
+      "best_epoch": 17,
+      "best_train_loss": 0.057346402843412296,
+      "best_val_loss": 0.024132652208209038,
+      "total_train_time_s": 7.732009958010167,
+      "early_stopped": true
+    },
+    "optimization_stats": {
+      "elapsed_s": 108.7223861250095,
+      "evaluations": 36,
+      "best_fitness": 0.7316542903544105
+    },
+    "validation_metrics": {
+      "auroc": 0.9492050930493497,
+      "auprc": 0.7384711841854007,
+      "accuracy": 0.931739936440678,
+      "precision": 0.6464435146443515,
+      "recall": 0.7768698931489629,
+      "sensitivity": 0.7768698931489629,
+      "specificity": 0.9499740990157626,
+      "f1_score": 0.7056808449900085,
+      "balanced_accuracy": 0.8634219960823628,
+      "mcc": 0.6710469673165194,
+      "confusion_matrix": {
+        "tn": 12837,
+        "fp": 676,
+        "fn": 355,
+        "tp": 1236,
+        "labels": [
+          "Normal (0)",
+          "Abnormal (1)"
+        ],
+        "matrix": [
+          [
+            12837,
+            676
+          ],
+          [
+            355,
+            1236
+          ]
+        ]
+      },
+      "false_positive_rate": 0.0500259009842374,
+      "fp_per_1000_normal": 50.025900984237396,
+      "normal_samples": 13513,
+      "abnormal_samples": 1591,
+      "total_samples": 15104,
+      "class_prevalence": 0.1053363347457627,
+      "threshold_used": 0.05356835545244815,
+      "positive_class": "abnormal (1)",
+      "zero_division_policy": 0.0
+    },
+    "test_metrics": {
+      "auroc": 0.9450954950241597,
+      "auprc": 0.7289318864667681,
+      "accuracy": 0.9277674788135594,
+      "precision": 0.629399585921325,
+      "recall": 0.764299182903834,
+      "sensitivity": 0.764299182903834,
+      "specificity": 0.9470139865314882,
+      "f1_score": 0.6903207493613397,
+      "balanced_accuracy": 0.8556565847176612,
+      "mcc": 0.6537962203486829,
+      "confusion_matrix": {
+        "tn": 12797,
+        "fp": 716,
+        "fn": 375,
+        "tp": 1216,
+        "labels": [
+          "Normal (0)",
+          "Abnormal (1)"
+        ],
+        "matrix": [
+          [
+            12797,
+            716
+          ],
+          [
+            375,
+            1216
+          ]
+        ]
+      },
+      "false_positive_rate": 0.052986013468511804,
+      "fp_per_1000_normal": 52.98601346851181,
+      "normal_samples": 13513,
+      "abnormal_samples": 1591,
+      "total_samples": 15104,
+      "class_prevalence": 0.1053363347457627,
+      "threshold_used": 0.05356835545244815,
+      "positive_class": "abnormal (1)",
+      "zero_division_policy": 0.0,
+      "latency_ms": {
+        "mean": 0.0005734540521235292,
+        "p50": 0.0005377880054349928,
+        "p95": 0.0006493169613827762,
+        "p99": 0.0006553136034014288
+      },
+      "throughput_events_per_second": 1920050.921376255
+    }
+  },
+  "gwo_ae": {
+    "experiment_name": "gwo_ae",
+    "optimizer": "GWO",
+    "run_id": "run_20261024_075517",
+    "hyperparameters": {
+      "latent_dim": 32,
+      "hidden_dims": [
+        192,
+        96
+      ],
+      "lr": 0.00125758874855917,
+      "weight_decay": 2.198720554259201e-06,
+      "dropout": 0.03372380255866521,
+      "noise_std": 0.1157161281004427,
+      "batch_size": 512
+    },
+    "threshold": 0.016307596109507466,
+    "threshold_percentile": 95.0,
+    "training_stats": {
+      "epochs_completed": 50,
+      "best_epoch": 50,
+      "best_train_loss": 0.02234574991037031,
+      "best_val_loss": 0.007545587606728077,
+      "total_train_time_s": 14.250492291990668,
+      "early_stopped": false
+    },
+    "optimization_stats": {
+      "elapsed_s": 139.63278554205317,
+      "evaluations": 36,
+      "best_fitness": 0.7452722168148642
+    },
+    "validation_metrics": {
+      "auroc": 0.9483298504878069,
+      "auprc": 0.7725771244434492,
+      "accuracy": 0.9331965042372882,
+      "precision": 0.6504653567735263,
+      "recall": 0.7906976744186046,
+      "sensitivity": 0.7906976744186046,
+      "specificity": 0.9499740990157626,
+      "f1_score": 0.7137588652482268,
+      "balanced_accuracy": 0.8703358867171835,
+      "mcc": 0.680480446150669,
+      "confusion_matrix": {
+        "tn": 12837,
+        "fp": 676,
+        "fn": 333,
+        "tp": 1258,
+        "labels": [
+          "Normal (0)",
+          "Abnormal (1)"
+        ],
+        "matrix": [
+          [
+            12837,
+            676
+          ],
+          [
+            333,
+            1258
+          ]
+        ]
+      },
+      "false_positive_rate": 0.0500259009842374,
+      "fp_per_1000_normal": 50.025900984237396,
+      "normal_samples": 13513,
+      "abnormal_samples": 1591,
+      "total_samples": 15104,
+      "class_prevalence": 0.1053363347457627,
+      "threshold_used": 0.016307596109507466,
+      "positive_class": "abnormal (1)",
+      "zero_division_policy": 0.0
+    },
+    "test_metrics": {
+      "auroc": 0.94660159876773,
+      "auprc": 0.7612358071067643,
+      "accuracy": 0.9282971398305084,
+      "precision": 0.6276381909547739,
+      "recall": 0.7850408548082967,
+      "sensitivity": 0.7850408548082967,
+      "specificity": 0.9451639162288167,
+      "f1_score": 0.6975705110304385,
+      "balanced_accuracy": 0.8651023855185567,
+      "mcc": 0.6627679772216591,
+      "confusion_matrix": {
+        "tn": 12772,
+        "fp": 741,
+        "fn": 342,
+        "tp": 1249,
+        "labels": [
+          "Normal (0)",
+          "Abnormal (1)"
+        ],
+        "matrix": [
+          [
+            12772,
+            741
+          ],
+          [
+            342,
+            1249
+          ]
+        ]
+      },
+      "false_positive_rate": 0.054836083771183305,
+      "fp_per_1000_normal": 54.836083771183304,
+      "normal_samples": 13513,
+      "abnormal_samples": 1591,
+      "total_samples": 15104,
+      "class_prevalence": 0.1053363347457627,
+      "threshold_used": 0.016307596109507466,
+      "positive_class": "abnormal (1)",
+      "zero_division_policy": 0.0,
+      "latency_ms": {
+        "mean": 0.0005508121553171126,
+        "p50": 0.0005561579023455802,
+        "p95": 0.0005633154398958017,
+        "p99": 0.0005634950795896565
+      },
+      "throughput_events_per_second": 1895433.6549183605
+    }
+  },
+  "coa_ae": {
+    "experiment_name": "coa_ae",
+    "optimizer": "COA",
+    "run_id": "run_20261024_080158",
+    "hyperparameters": {
+      "latent_dim": 12,
+      "hidden_dims": [
+        64,
+        32
+      ],
+      "lr": 0.001382806531253704,
+      "weight_decay": 4.67245209884931e-05,
+      "dropout": 0.032947743757841236,
+      "noise_std": 0.11195657927714572,
+      "batch_size": 128
+    },
+    "threshold": 0.06480635929931133,
+    "threshold_percentile": 95.0,
+    "training_stats": {
+      "epochs_completed": 50,
+      "best_epoch": 50,
+      "best_train_loss": 0.061211153158167816,
+      "best_val_loss": 0.026188654825091362,
+      "total_train_time_s": 12.38023179199081,
+      "early_stopped": false
+    },
+    "optimization_stats": {
+      "elapsed_s": 118.00570762500865,
+      "evaluations": 36,
+      "best_fitness": 0.7259773043222045
+    },
+    "validation_metrics": {
+      "auroc": 0.9235370478961921,
+      "auprc": 0.7097928917331967,
+      "accuracy": 0.9282971398305084,
+      "precision": 0.6365591397849463,
+      "recall": 0.7441860465116279,
+      "sensitivity": 0.7441860465116279,
+      "specificity": 0.9499740990157626,
+      "f1_score": 0.6861779194436395,
+      "balanced_accuracy": 0.8470800727636952,
+      "mcc": 0.6484919592171386,
+      "confusion_matrix": {
+        "tn": 12837,
+        "fp": 676,
+        "fn": 407,
+        "tp": 1184,
+        "labels": [
+          "Normal (0)",
+          "Abnormal (1)"
+        ],
+        "matrix": [
+          [
+            12837,
+            676
+          ],
+          [
+            407,
+            1184
+          ]
+        ]
+      },
+      "false_positive_rate": 0.0500259009842374,
+      "fp_per_1000_normal": 50.025900984237396,
+      "normal_samples": 13513,
+      "abnormal_samples": 1591,
+      "total_samples": 15104,
+      "class_prevalence": 0.1053363347457627,
+      "threshold_used": 0.06480635929931133,
+      "positive_class": "abnormal (1)",
+      "zero_division_policy": 0.0
+    },
+    "test_metrics": {
+      "auroc": 0.9215575773274732,
+      "auprc": 0.6965748064041302,
+      "accuracy": 0.923000529661017,
+      "precision": 0.6126315789473684,
+      "recall": 0.7316153362664991,
+      "sensitivity": 0.7316153362664991,
+      "specificity": 0.945533930289351,
+      "f1_score": 0.6668576339157836,
+      "balanced_accuracy": 0.838574633277925,
+      "mcc": 0.6268531784691272,
+      "confusion_matrix": {
+        "tn": 12777,
+        "fp": 736,
+        "fn": 427,
+        "tp": 1164,
+        "labels": [
+          "Normal (0)",
+          "Abnormal (1)"
+        ],
+        "matrix": [
+          [
+            12777,
+            736
+          ],
+          [
+            427,
+            1164
+          ]
+        ]
+      },
+      "false_positive_rate": 0.054466069710649004,
+      "fp_per_1000_normal": 54.466069710649,
+      "normal_samples": 13513,
+      "abnormal_samples": 1591,
+      "total_samples": 15104,
+      "class_prevalence": 0.1053363347457627,
+      "threshold_used": 0.06480635929931133,
+      "positive_class": "abnormal (1)",
+      "zero_division_policy": 0.0,
+      "latency_ms": {
+        "mean": 0.00024045504487422493,
+        "p50": 0.000247365463464876,
+        "p95": 0.0002609176120177697,
+        "p99": 0.00026097367142136724
+      },
+      "throughput_events_per_second": 4916666.679080057
+    }
+  }
+}

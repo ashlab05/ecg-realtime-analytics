@@ -33,7 +33,7 @@ export default function AnalyticsPage({ predictions, stats }: Props) {
       <PageHeader
         eyebrow="Section 04"
         title="Analytics"
-        description="Descriptive view over the live session: aggregate statistics, class mix of the prediction feed, anomaly occurrences over time, and the full event history."
+        description="Descriptive view over the live session and offline dataset metrics. The system relies on a Deep Learning Autoencoder for anomaly detection (gating) and an XGBoost classifier for precise arrhythmia sub-classing."
       />
 
       <div className="space-y-6">
@@ -70,6 +70,29 @@ export default function AnalyticsPage({ predictions, stats }: Props) {
           </div>
 
           <AnomalyTimeline predictions={predictions} />
+        </div>
+
+        <div className="card mt-6 mb-6">
+          <h2 className="card-title">Exploratory Data Analysis (Dataset Metrics)</h2>
+          <p className="text-[11px] text-slate-400 mb-4">
+            Visualizations generated from the underlying MIT-BIH dataset showing class distribution, 
+            RR-interval densities (highlighting how arrhythmic beats deviate from normal rhythms), 
+            and the correlation matrix of the 32 extracted features. This Deep Learning focused approach leverages these morphological and rhythmic attributes to isolate anomalies effectively.
+          </p>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <div className="rounded-lg bg-black/40 border border-surface-border p-2 flex flex-col items-center">
+              <span className="text-[10px] text-slate-500 mb-2 uppercase tracking-wider">Class Distribution</span>
+              <img src="/figures/class_distribution.png" alt="Class Distribution" className="w-full h-auto rounded" />
+            </div>
+            <div className="rounded-lg bg-black/40 border border-surface-border p-2 flex flex-col items-center">
+              <span className="text-[10px] text-slate-500 mb-2 uppercase tracking-wider">RR Intervals Density</span>
+              <img src="/figures/rr_intervals.png" alt="RR Intervals" className="w-full h-auto rounded" />
+            </div>
+            <div className="rounded-lg bg-black/40 border border-surface-border p-2 flex flex-col items-center">
+              <span className="text-[10px] text-slate-500 mb-2 uppercase tracking-wider">Feature Correlation Matrix</span>
+              <img src="/figures/correlation_matrix.png" alt="Correlation Matrix" className="w-full h-auto rounded" />
+            </div>
+          </div>
         </div>
 
         <EventHistoryTable

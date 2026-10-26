@@ -100,8 +100,12 @@ def model_experiments() -> dict:
     import json
 
     LABELS = {
+        "baseline_ae": "Baseline AE (Adam Default)",
+        "pso_ae": "PSO-Tuned AE",
+        "gwo_ae": "GWO-Tuned AE",
+        "coa_ae": "COA-Tuned AE",
         "xgboost_only": "A · XGBoost only (5-class)",
-        "autoencoder_only": "B · Autoencoder anomaly detection",
+        "autoencoder_only": "B · Autoencoder anomaly detection (Legacy)",
         "hybrid_ae_xgb": "C · Hybrid AE → XGBoost (production)",
         "xgboost_augmented": "D · XGBoost + AE latent/error features",
         "mlp_baseline": "E · MLP baseline",
@@ -133,6 +137,20 @@ def model_experiments() -> dict:
     order = {name: i for i, name in enumerate(LABELS)}
     experiments.sort(key=lambda e: (order.get(e["name"], 99), e["name"]))
     return {"experiments": experiments, "directory": str(exp_dir)}
+
+
+@router.get("/models/metaheuristics")
+def metaheuristics_summary() -> dict:
+    """Summary and complete metrics for Baseline, PSO, GWO, and COA Autoencoders."""
+    import json
+    from pathlib import Path
+    summary_path = Path(__file__).resolve().parent.parent.parent / "reports" / "tables" / "all_experiments_summary.json"
+    if summary_path.exists():
+        try:
+            return json.loads(summary_path.read_text())
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
+    return {}
 
 
 @router.get("/threshold", response_model=ThresholdOut)

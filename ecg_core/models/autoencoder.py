@@ -32,18 +32,21 @@ class ECGAutoencoder(nn.Module):
         hidden_dims: Optional[tuple] = None,
         latent_dim: int = 16,
         dropout: float = 0.1,
+        noise_std: float = 0.0,
     ):
         super().__init__()
         self.hidden_dims = tuple(hidden_dims) if hidden_dims else (128, 64)
         hidden_dims = self.hidden_dims
         self.n_features = n_features
         self.latent_dim = latent_dim
+        self.dropout = float(dropout)
+        self.noise_std = float(noise_std)
 
         # Encoder: n_features -> ... -> latent_dim
         encoder_layers = []
         dim = n_features
         for h in hidden_dims:
-            encoder_layers += [nn.Linear(dim, h), nn.ReLU(), nn.Dropout(dropout)]
+            encoder_layers += [nn.Linear(dim, h), nn.ReLU(), nn.Dropout(self.dropout)]
             dim = h
         encoder_layers.append(nn.Linear(dim, latent_dim))
         self.encoder = nn.Sequential(*encoder_layers)
@@ -52,12 +55,15 @@ class ECGAutoencoder(nn.Module):
         decoder_layers = []
         dim = latent_dim
         for h in reversed(hidden_dims):
-            decoder_layers += [nn.Linear(dim, h), nn.ReLU(), nn.Dropout(dropout)]
+            decoder_layers += [nn.Linear(dim, h), nn.ReLU(), nn.Dropout(self.dropout)]
             dim = h
         decoder_layers.append(nn.Linear(dim, n_features))
         self.decoder = nn.Sequential(*decoder_layers)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
+        if self.training and self.noise_std > 0.0:
+            noise = torch.randn_like(x) * self.noise_std
+            return self.decoder(self.encoder(x + noise))
         return self.decoder(self.encoder(x))
 
     def encode(self, x: torch.Tensor) -> torch.Tensor:
@@ -108,6 +114,8 @@ def save_autoencoder(
         "n_features": model.n_features,
         "hidden_dims": list(model.hidden_dims),
         "latent_dim": model.latent_dim,
+        "dropout": getattr(model, "dropout", 0.1),
+        "noise_std": getattr(model, "noise_std", 0.0),
         "threshold": float(threshold),
         "threshold_percentile": float(threshold_percentile),
         "validation_error_stats": val_error_stats,
@@ -130,6 +138,8 @@ def load_autoencoder(out_dir: Optional[Path] = None, device: str = "cpu") -> ECG
         n_features=meta["n_features"],
         hidden_dims=tuple(meta.get("hidden_dims", (128, 64))),
         latent_dim=meta["latent_dim"],
+        dropout=float(meta.get("dropout", 0.1)),
+        noise_std=float(meta.get("noise_std", 0.0)),
     )
     model.load_state_dict(torch.load(weights, map_location=device, weights_only=True))
     model.to(device)
